@@ -10,7 +10,6 @@ def chunk_text(full_text):
 
 	for idx in range(len(full_text)):
 			lines.append(full_text[idx]['text'])
-
 	i = 0
 	while i != len(lines):
 		if section_pattern.match(lines[i]):
@@ -25,6 +24,7 @@ def chunk_text(full_text):
 		else:
 			chunk.append(lines[i])
 			i+=1
+	chunks[chunk[0][0:2]] = chunk
 	print(chunks)
 
 with plumber.open("./data/raw/bns.pdf") as pdf:
