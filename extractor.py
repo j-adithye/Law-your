@@ -30,6 +30,8 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 				for n in chunk[0][0:3]:
 					if n.isdigit():
 						idx_of_dict += n 
+				
+				chunk[0] = chunk[0][len(n)+1:]
 				chunks[idx_of_dict] = chunk
 				chunk = []
 				chunk.append(lines[i])
@@ -42,6 +44,8 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 	for n in chunk[0][0:3]:
 		if n.isdigit():
 			idx_of_dict += n 
+	if not chunk[0][0].isdigit():
+		chunk[0] = chunk[0][len(n)+1:]
 	chunks[idx_of_dict] = chunk
 	return chunks
 
@@ -57,7 +61,7 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 	# print(full_text[-1]['text'])
 	out = chunk_text(full_text,chunks)
 
-	for i in range(16,110):
+	for i in range(16,19):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
@@ -66,3 +70,4 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 		full_text = cropped.extract_text_lines()
 		out = chunk_text(full_text,chunks)
 	pprint(chunks, indent=4)
+
