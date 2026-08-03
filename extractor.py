@@ -50,8 +50,17 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 	return chunks
 
 
-def format_chunks(chunks):
-	pass
+def format_chunks(value):    # formats chunks to a clean structure
+	formatted = ''
+	subclass_pattern = re.compile(r'^\([A-Za-z0-9]+\)')
+	for line in value:
+		if subclass_pattern.match(line):
+			formatted += '\n' + line
+		else:
+			formatted += ' ' + line
+
+	return(formatted)
+	
 
 chunks = {}
 with plumber.open("./data/raw/bns.pdf") as pdf:
@@ -62,10 +71,9 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 	full_text = cropped.extract_text_lines()
 	full_text.pop(-1)              #removing a footnote that only exist in the first page
 	full_text.pop(-1)
-	# print(full_text[-1]['text'])
 	out = chunk_text(full_text,chunks)
 
-	for i in range(16,19):
+	for i in range(16,25):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
@@ -73,6 +81,11 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 
 		full_text = cropped.extract_text_lines()
 		out = chunk_text(full_text,chunks)
-del chunks['']
-pprint(chunks, indent=4)
+chunks.pop('',None)
+
+for key,value in chunks.items():
+	formatted = format_chunks(key,value)
+	chunks[key] = formatted
+
+print(chunks['2'])
 
