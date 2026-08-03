@@ -37,7 +37,8 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 		else:
 			chunk.append(lines[i])
 			i+=1
-	idx_of_dict = ''
+
+	idx_of_dict = ''           # anything left is added back to the dict to continue in the next run
 	for n in chunk[0][0:3]:
 		if n.isdigit():
 			idx_of_dict += n 
@@ -46,13 +47,22 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 
 chunks = {}
 with plumber.open("./data/raw/bns.pdf") as pdf:
-	for i in range(16,18):
+	page = pdf.pages[15]                  #start on page 16 of bns.pdf because everything before is not useful
+	height = page.height
+	width = page.width
+	cropped = page.crop((0,0,width,height - 65))
+	full_text = cropped.extract_text_lines()
+	full_text.pop(-1)              #removing a footnote that only exist in the first page
+	full_text.pop(-1)
+	# print(full_text[-1]['text'])
+	out = chunk_text(full_text,chunks)
+
+	for i in range(16,110):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
 		cropped = page.crop((0,0,width,height - 65)) #left,up,right,down
 
 		full_text = cropped.extract_text_lines()
-		# print(full_text[0]['text'])
 		out = chunk_text(full_text,chunks)
 	pprint(chunks, indent=4)
