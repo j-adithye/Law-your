@@ -14,6 +14,7 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 	if not section_pattern.match(lines[0]) and chunks :     # check the first line to see if it is a continuation of last page
 		last_key = next(reversed(chunks))
 		chunk.extend(chunks[last_key])
+		chunk.append(lines[0])
 	else:
 		chunk.append(lines[0])
 
@@ -45,13 +46,13 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 
 chunks = {}
 with plumber.open("./data/raw/bns.pdf") as pdf:
-	for i in range(15,20):
+	for i in range(16,18):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
 		cropped = page.crop((0,0,width,height - 65)) #left,up,right,down
 
 		full_text = cropped.extract_text_lines()
-
+		# print(full_text[0]['text'])
 		out = chunk_text(full_text,chunks)
 	pprint(chunks, indent=4)
