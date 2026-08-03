@@ -49,6 +49,10 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 	chunks[idx_of_dict] = chunk
 	return chunks
 
+
+def format_chunks(chunks):
+	pass
+
 chunks = {}
 with plumber.open("./data/raw/bns.pdf") as pdf:
 	page = pdf.pages[15]                  #start on page 16 of bns.pdf because everything before is not useful
@@ -69,5 +73,6 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 
 		full_text = cropped.extract_text_lines()
 		out = chunk_text(full_text,chunks)
-	pprint(chunks, indent=4)
+del chunks['']
+pprint(chunks, indent=4)
 
