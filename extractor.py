@@ -2,6 +2,9 @@ import pdfplumber as plumber
 import re
 import json
 
+
+
+
 def chunk_text(full_text, chunks):  #inputs 1 page
 	section_pattern = re.compile(r'^(\d+)\.\s+[A-Z]')
 
@@ -76,7 +79,7 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 	full_text.pop(-1)
 	out = chunk_text(full_text,chunks)
 
-	for i in range(108,111):
+	for i in range(16,111):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
