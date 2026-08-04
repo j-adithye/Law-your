@@ -84,8 +84,10 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 
 		full_text = cropped.extract_text_lines()
 		out = chunk_text(full_text,chunks)
-chunks.pop('',None)
-last_key = next(reversed(chunks))
+
+chunks.pop('',None)        #removed useless info
+
+last_key = next(reversed(chunks))                #last line indx formatting issue solved
 chunks[last_key][0] = chunks[last_key][0][5:]
 
 for key,value in chunks.items():
