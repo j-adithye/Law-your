@@ -28,6 +28,7 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 		chunk = []
 		chunk.append(lines[0])
 
+
 		
 	i = 1
 	while i != len(lines):
