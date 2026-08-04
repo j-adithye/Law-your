@@ -1,6 +1,6 @@
 import pdfplumber as plumber
 import re
-from pprint import pprint
+import json
 
 def chunk_text(full_text, chunks):  #inputs 1 page
 	section_pattern = re.compile(r'^(\d+)\.\s+[A-Z]')
@@ -31,7 +31,7 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 					if n.isdigit():
 						idx_of_dict += n 
 				
-				chunk[0] = chunk[0][len(n)+1:]
+				chunk[0] = chunk[0][len(idx_of_dict)+2:]
 				chunks[idx_of_dict] = chunk
 				chunk = []
 				chunk.append(lines[i])
@@ -40,15 +40,14 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 			chunk.append(lines[i])
 			i+=1
 
-	idx_of_dict = ''           # anything left is added back to the dict to continue in the next run
+	idx_of_dict = ''           # anything left is added back to the dict to continue in the next loop
 	for n in chunk[0][0:3]:
 		if n.isdigit():
 			idx_of_dict += n 
 	if not chunk[0][0].isdigit():
-		chunk[0] = chunk[0][len(n)+1:]
+		chunk[0] = chunk[0][len(idx_of_dict)+2:]
 	chunks[idx_of_dict] = chunk
 	return chunks
-
 
 def format_chunks(value):    # formats chunks to a clean structure
 	formatted = ''
@@ -60,7 +59,11 @@ def format_chunks(value):    # formats chunks to a clean structure
 			formatted += ' ' + line
 
 	return(formatted)
-	
+
+def to_json(chunks):
+	with open("./data/processed/bns_sections.json", "w") as doc:
+		json.dump(chunks, doc, indent=4)
+		print("Set")
 
 chunks = {}
 with plumber.open("./data/raw/bns.pdf") as pdf:
@@ -73,7 +76,7 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 	full_text.pop(-1)
 	out = chunk_text(full_text,chunks)
 
-	for i in range(16,25):
+	for i in range(108,111):
 		page = pdf.pages[i]
 		height = page.height
 		width = page.width
@@ -83,9 +86,10 @@ with plumber.open("./data/raw/bns.pdf") as pdf:
 		out = chunk_text(full_text,chunks)
 chunks.pop('',None)
 
+
 for key,value in chunks.items():
-	formatted = format_chunks(key,value)
+	formatted = format_chunks(value)
 	chunks[key] = formatted
 
-print(chunks['2'])
+to_json(chunks)
 
