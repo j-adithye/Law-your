@@ -2,11 +2,8 @@ import pdfplumber as plumber
 import re
 import json
 
-
-
-
 def chunk_text(full_text, chunks):  #inputs 1 page
-	section_pattern = re.compile(r'^(\d+)\.\s+[A-Z]')
+	section_pattern = re.compile(r'^(\d+)\.\s*—?[A-Z]')
 
 	lines = []	
 	chunk = []
@@ -18,7 +15,17 @@ def chunk_text(full_text, chunks):  #inputs 1 page
 		last_key = next(reversed(chunks))
 		chunk.extend(chunks[last_key])
 		chunk.append(lines[0])
-	else:
+	elif chunks:
+		last_key = next(reversed(chunks))
+		chunk.extend(chunks[last_key])
+		idx_of_dict = ''
+		for n in chunk[0][0:3]:
+			if n.isdigit():
+				idx_of_dict += n 
+		
+		chunk[0] = chunk[0][len(idx_of_dict)+2:]
+		chunks[idx_of_dict] = chunk
+		chunk = []
 		chunk.append(lines[0])
 
 		
